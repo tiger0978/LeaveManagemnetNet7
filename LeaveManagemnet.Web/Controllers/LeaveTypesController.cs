@@ -10,9 +10,12 @@ using AutoMapper;
 using LeaveManagemnet.Web.Models;
 using LeaveManagemnet.Web.Contracts;
 using LeaveManagemnet.Web.Respository;
+using Microsoft.AspNetCore.Authorization;
+using LeaveManagemnet.Web.Constants;
 
 namespace LeaveManagemnet.Web.Controllers
 {
+    [Authorize(Roles =Roles.Administrator)]
     public class LeaveTypesController : Controller
     {
         private readonly IMapper mapper;
@@ -54,6 +57,7 @@ namespace LeaveManagemnet.Web.Controllers
         // POST: LeaveTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(LeaveTypeVM leaveTypeVM)
@@ -83,6 +87,7 @@ namespace LeaveManagemnet.Web.Controllers
         // POST: LeaveTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, LeaveTypeVM leaveTypeVM)
@@ -117,6 +122,7 @@ namespace LeaveManagemnet.Web.Controllers
         // POST: LeaveTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await leaveTypeRepository.DeleteAsync(id);
