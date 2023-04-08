@@ -35,18 +35,6 @@ namespace LeaveManagemnet.Web.Configurations.Entities
                    LastName = "User",
                    PasswordHash = hasher.HashPassword(null, "P@assword1"),
                    EmailConfirmed = true
-               },
-               new Employee
-               {
-                   Id = "6cdbb1d2e-acbd-4c9c-8d93-d020c48a8431",
-                   Email = "administractor@localhost.com",
-                   NormalizedEmail = "ADMINISTRACTOR@LOCALHOST.COM",
-                   NormalizedUserName = "ADMINISTRACTOR@LOCALHOST.COM",
-                   UserName = "administractor@localhost.com",
-                   FirstName = "Wang",
-                   LastName = "Ming",
-                   PasswordHash = hasher.HashPassword(null, "P@assword1"),
-                   EmailConfirmed = true
                }
            ) ;
         }
