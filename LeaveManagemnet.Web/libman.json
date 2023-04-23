@@ -3,15 +3,28 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "provider": "cdnjs",
       "library": "sweetalert@2.1.2",
       "destination": "wwwroot/lib/sweetalert/"
+    },
+    {
+      "library": "font-awesome@6.3.0",
+      "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "jquery-datetimepicker@2.5.20",
+      "destination": "wwwroot/lib/jquery-datetimepicker/"
+    },
+    {
+      "library": "jquery-ui-multidatespicker@1.6.6",
+      "destination": "wwwroot/lib/jquery-ui-multidatespicker/"
+    },
+    {
+      "library": "jquery@3.6.4",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "jqueryui@1.13.2",
+      "destination": "wwwroot/lib/jqueryui/"
     }
-  ,
-{
-  "provider": "cdnjs",
-  "library": "font-awesome@6.3.0",
-  "destination": "wwwroot/lib/font-awesome/"
-}
-]
+  ]
 }

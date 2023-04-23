@@ -66,10 +66,6 @@ namespace LeaveManagemnet.Web.Respository
             return model;
         }
 
-
-
-
-
         public async Task LeaveTypeAllocation(int leaveTypeId)
         {
             var employees = await userManager.GetUsersInRoleAsync(Roles.User);
@@ -106,6 +102,11 @@ namespace LeaveManagemnet.Web.Respository
             await UpdateAsync(leaveAllocation);
 
             return true;
+        }
+
+        public async Task<LeaveAllocation?> GetEmployeeAllocations(string employeeId, int leaveTypeId)
+        {
+            return await context.LeaveAllocations.FirstOrDefaultAsync(q=> q.EmployeeId==employeeId && q.LeaveTypeId==leaveTypeId);
         }
     }
 }
