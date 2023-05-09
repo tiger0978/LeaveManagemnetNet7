@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Net.Mail;
 
-namespace LeaveManagemnet.Web.Services
+namespace LeaveManagement.Web.Services
 {
     public class EmailSender : IEmailSender
     {

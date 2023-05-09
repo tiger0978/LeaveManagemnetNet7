@@ -1,38 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LeaveManagement.Common.Constants;
+using LeaveManagement.Application.Contracts;
+using LeaveManagement.Data;
+using LeaveManagement.Common.Models;
+using LeaveManagement.Application.Respository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using LeaveManagemnet.Web.Data;
-using LeaveManagemnet.Web.Models;
-using AutoMapper;
-using LeaveManagemnet.Web.Contracts;
-using Microsoft.AspNetCore.Authorization;
-using LeaveManagemnet.Web.Constants;
-using LeaveManagemnet.Web.Respository;
 
-namespace LeaveManagemnet.Web.Controllers
+namespace LeaveManagement.Web.Controllers
 {
     [Authorize]
     public class LeaveRequestsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
         private readonly ILeaveRequestRepository leaveRequestRepository;
+        private readonly ILeaveTypeRepository leaveTypeRepository;
+        private readonly ILogger<LeaveRequestsController> logger;
 
-        public LeaveRequestsController(ApplicationDbContext context, ILeaveRequestRepository leaveRequestRepository)
+        public LeaveRequestsController(ApplicationDbContext context, 
+            ILeaveRequestRepository leaveRequestRepository,
+            ILeaveTypeRepository leaveTypeRepository,
+            ILogger<LeaveRequestsController> logger)
         {
-            _context = context;
+            this.context = context;
             this.leaveRequestRepository = leaveRequestRepository;
+            this.leaveTypeRepository = leaveTypeRepository;
+            this.logger = logger;
         }
 
         // GET: LeaveRequests/Create
         public IActionResult Create()
         {
-            var model= new LeaveRequestCreateVM
+            var model = new LeaveRequestCreateVM
             {
-                LeaveTypes = new SelectList(_context.LeaveTypes, "Id", "Name")
+                LeaveTypes = new SelectList(context.LeaveTypes, "Id", "Name")
             };
             return View(model);
         }
@@ -48,16 +49,22 @@ namespace LeaveManagemnet.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await leaveRequestRepository.CreateLeaveRequest(model);
-                    return RedirectToAction(nameof(MyLeave));
+                    var isValidRequest = await leaveRequestRepository.CreateLeaveRequest(model);
+                    if (isValidRequest)
+                    {
+                        return RedirectToAction(nameof(MyLeave));
+                    }
+                    ModelState.AddModelError(string.Empty, "You have exceeded your allocation with this request.");
                 }
             }
             catch (Exception ex)
+
             {
+                logger.LogError(ex, "Error Creating Leave Request");
                 ModelState.AddModelError(string.Empty, "An Error Has Occured, Please Try Again Later");
             }
 
-            ViewData["LeaveTypeId"] = new SelectList(_context.LeaveTypes, "Id", "Name", model.LeaveTypeId);
+            model.LeaveTypes = new SelectList(await leaveTypeRepository.GetAllAsync(), "Id", "Name", model.LeaveTypeId);
             return View(model);
         }
 
@@ -89,27 +96,29 @@ namespace LeaveManagemnet.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveRequest(int id, bool approved)
         {
-            try 
+            try
             {
                 await leaveRequestRepository.ChangeApproveStatus(id, approved);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                logger.LogError(ex, "Error Arroving Leave Request");
                 throw;
             }
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
-        [AutoValidateAntiforgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {
             try
             {
                 await leaveRequestRepository.CancelLeaveRequest(id);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
+                logger.LogError(ex, "Error Cancelling Leave Request");
                 throw;
             }
             return RedirectToAction(nameof(MyLeave));

@@ -1,9 +1,10 @@
-﻿using LeaveManagemnet.Web.Models;
+﻿using LeaveManagement.Common.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace LeaveManagemnet.Web.Controllers
+namespace LeaveManagement.Web.Controllers
 {
     public class HomeController : Controller
     {
@@ -26,7 +27,15 @@ namespace LeaveManagemnet.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            if (exceptionHandlerPathFeature != null) 
+            {
+                Exception exception = exceptionHandlerPathFeature.Error;
+                _logger.LogError(exception, $"Error Encountered By User: {this.User?.Identity?.Name} | Request Id: {requestId}");
+            }
+
+            return View(new ErrorViewModel { RequestId = requestId });
         }
     }
 }

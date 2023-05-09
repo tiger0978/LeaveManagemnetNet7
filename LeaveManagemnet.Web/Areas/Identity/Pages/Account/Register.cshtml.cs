@@ -12,16 +12,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using LeaveManagemnet.Web.Data;
+using LeaveManagement.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using LeaveManagemnet.Web.Constants;
+using LeaveManagement.Common.Constants;
 
-namespace LeaveManagemnet.Web.Areas.Identity.Pages.Account
+namespace LeaveManagement.Web.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {

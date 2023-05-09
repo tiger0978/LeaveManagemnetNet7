@@ -1,13 +1,12 @@
-using LeaveManagemnet.Web.Data;
+using LeaveManagement.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using LeaveManagemnet.Web.Configurations;
-using LeaveManagemnet.Web.Contracts;
-using LeaveManagemnet.Web.Respository;
+using LeaveManagement.Application.Configurations;
+using LeaveManagement.Application.Contracts;
+using LeaveManagement.Application.Respository;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using LeaveManagemnet.Web.Services;
+using LeaveManagement.Web.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,17 +23,19 @@ builder.Services.AddDefaultIdentity<Employee>(options => options.SignIn.RequireC
 builder.Services.AddHttpContextAccessor();
 
 //註冊寄送email的服務
-builder.Services.AddTransient<IEmailSender>(s => new EmailSender("localhost", 25, "no-reply@leavemanagement.com"));
+//每次注入時都會建立新的實體
+builder.Services.AddTransient<IEmailSender>(s => new EmailSender("localhost", 25, "no-reply@LeaveManagement.com"));
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ILeaveTypeRepository, LeaveTypeRepository>();
 builder.Services.AddScoped<ILeaveAllocationRepository,LeaveAllocationRepository>();
 builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
 
-
-
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
+builder.Host.UseSerilog((ctx, lc) =>
+    lc.WriteTo.Console()
+    .ReadFrom.Configuration(ctx.Configuration));
 
 builder.Services.AddControllersWithViews();
 
